@@ -14,36 +14,47 @@
   document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 
   /* ---------- hero video: clips cross-fade into each other, so there is never a hard cut ---------- */
-  let vids = [...document.querySelectorAll('.hero-video')];
+  // Video only. The still image appears ONLY if no clip can play on this computer.
+  // Each clip ends on its own first frame, so a clip looping on itself never jumps; we only
+  // cross-fade to the next angle once that clip is fully loaded, laying it on top of the playing one.
+  const vids = [...document.querySelectorAll('.hero-video')];
+  const poster = document.querySelector('.hero-poster');
   const FADE = 1.4;
-  if (!reduce && vids.length && !navigator.connection?.saveData) {
-    let cur = -1;
-    const playNext = () => {
-      if (!vids.length) return;
-      const next = (cur + 1) % vids.length;
-      const v = vids[next];
-      try { v.currentTime = 0; } catch { /* not loaded yet */ }
-      const p = v.play();
-      if (p && p.catch) p.catch(() => {});
+  const showPoster = () => poster && poster.classList.add('show');
+  if (reduce || !vids.length || navigator.connection?.saveData) {
+    showPoster();
+  } else {
+    let cur = null, z = 1, handed = false;
+    const ok = (v) => v.isConnected && !v.error && v.readyState >= 3;
+    const show = (v) => {
+      v.style.zIndex = String(++z);
+      try { v.currentTime = 0; } catch { /* ignore */ }
+      const p = v.play(); if (p && p.catch) p.catch(() => {});
       v.classList.add('on');
-      if (cur >= 0 && cur !== next) { const old = vids[cur]; setTimeout(() => { old.classList.remove('on'); old.pause(); }, FADE * 1000); }
-      cur = next;
+      const old = cur; cur = v; handed = false;
+      if (old && old !== v) setTimeout(() => { if (cur !== old) { old.classList.remove('on'); old.pause(); } }, FADE * 1000 + 150);
     };
-    vids.forEach((v, i) => {
-      v.src = v.dataset.src;
+    vids.forEach((v) => {
+      v.loop = true;            // seamless on its own; used whenever the next angle is not ready yet
       v.preload = 'auto';
-      // start with whichever clip is ready first; the others join the rotation when their turn comes
-      v.addEventListener('canplaythrough', () => { if (cur < 0) { cur = vids.indexOf(v) - 1; playNext(); } }, { once: true });
+      v.src = v.dataset.src;
+      v.addEventListener('canplaythrough', () => { if (!cur) show(v); }, { once: true });
       v.addEventListener('timeupdate', () => {
-        if (vids[cur] === v && v.duration && v.currentTime > v.duration - FADE - 0.1 && !v.dataset.handed) {
-          v.dataset.handed = '1';
-          if (vids.length === 1) { v.currentTime = 0; v.dataset.handed = ''; return; }
-          playNext();
-          setTimeout(() => { v.dataset.handed = ''; }, FADE * 1000 + 200);
+        if (cur !== v || !v.duration) return;
+        if (v.currentTime < 1) handed = false;
+        if (!handed && v.currentTime > v.duration - FADE - 0.15) {
+          const i = vids.indexOf(v);
+          for (let k = 1; k < vids.length; k++) {
+            const n = vids[(i + k) % vids.length];
+            if (ok(n)) { handed = true; show(n); return; }
+          }
+          handed = true;        // nothing else ready: let this clip loop on itself
         }
       });
-      v.addEventListener('error', () => { const k = vids.indexOf(v); if (k >= 0) { vids.splice(k, 1); if (cur >= k) cur--; } v.remove(); }, { once: true });
+      v.addEventListener('error', () => { v.remove(); if (!vids.some(ok) && !cur) showPoster(); }, { once: true });
     });
+    // still nothing playing after 6 s (blocked autoplay, old browser): fall back to the still
+    setTimeout(() => { if (!cur || cur.paused) showPoster(); }, 6000);
   }
 
   /* ---------- ambient particles: suits and chips drifting upward ---------- */
