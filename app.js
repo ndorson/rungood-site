@@ -31,6 +31,7 @@
     box.innerHTML = '<svg></svg><div class="rg-enddot"></div><div class="rg-endpill"></div>';
     const svg = box.querySelector('svg'), dot = box.querySelector('.rg-enddot'), pill = box.querySelector('.rg-endpill');
     const unit = opts.unit || 'BB';
+    const lab = (v) => unit === '$' ? money(v, v !== 0).replace('.00', '') : `${v > 0 ? '+' : ''}${v.toFixed(1)} ${unit}`;
     return (series, ev, animate) => {
       const W = box.clientWidth, H = box.clientHeight, padR = 64, padT = 8, padB = 16, cw = W - padR;
       const all = ev ? series.concat(ev) : series;
@@ -42,7 +43,7 @@
       const pts = (a) => a.map((v, i) => `${x(i, a.length).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
       let g = '<defs><linearGradient id="rgfill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3ddc84" stop-opacity=".22"/><stop offset="1" stop-color="#3ddc84" stop-opacity="0"/></linearGradient></defs>';
       for (let v = lo; v <= hi + 1e-9; v += step) {
-        g += `<line class="${v === 0 ? 'zero' : 'gl'}" x1="0" x2="${cw}" y1="${y(v)}" y2="${y(v)}"/><text class="yl" x="${cw + 8}" y="${y(v) + 3.5}">${v > 0 ? '+' : ''}${v.toFixed(1)} ${unit}</text>`;
+        g += `<line class="${v === 0 ? 'zero' : 'gl'}" x1="0" x2="${cw}" y1="${y(v)}" y2="${y(v)}"/><text class="yl" x="${cw + 8}" y="${y(v) + 3.5}">${lab(v)}</text>`;
       }
       const p = pts(series);
       g += `<polygon class="area" points="0,${y(lo)} ${p} ${x(series.length - 1, series.length)},${y(lo)}"/>`;
@@ -51,7 +52,7 @@
       svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.innerHTML = g;
       const last = series[series.length - 1], lx = x(series.length - 1, series.length), ly = y(last);
       dot.style.left = `${lx}px`; dot.style.top = `${ly}px`;
-      pill.style.left = `${lx}px`; pill.style.top = `${ly}px`; pill.textContent = `${num(last)} ${unit}`;
+      pill.style.left = `${lx}px`; pill.style.top = `${ly}px`; pill.textContent = unit === '$' ? money(last) : `${num(last)} ${unit}`;
       if (animate) {
         const line = svg.querySelector('.line'), len = line.getTotalLength ? line.getTotalLength() : 2000;
         line.style.strokeDasharray = len; line.style.strokeDashoffset = len; svg.querySelector('.area').style.opacity = 0;
@@ -307,6 +308,31 @@
         <div class="bk-srow"><span>Week 46 · Nov 10–16</span><b class="up">+$318.00</b><b class="up">+$341.50</b><span>+$29.80</span><span class="bk-warn">$23.50 short</span></div>
       </div>`;
     new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setTimeout(() => $('.bk-match', bk).classList.add('in'), 500); }), { threshold: .4 }).observe(bk);
+  }
+  /* ---------- the staking page ---------- */
+  const sk = $('#rg-stake');
+  if (sk) {
+    sk.innerHTML = `
+      <div class="sk-deal"><h4>BigStack Mike <span>· you get 50% · makeup on · since Nov 1</span></h4><div class="sk-btn"><i>Settle</i><i>Report (HTML)</i><i>Report (PNG)</i></div></div>
+      <div class="sk-kpis">
+        <div class="rg-panel sk-kpi"><div class="rg-cap">Net result</div><div class="v up" data-k="net">+$2,140.50</div><div class="s">6,820 hands · 31 sessions</div></div>
+        <div class="rg-panel sk-kpi"><div class="rg-cap">Win rate</div><div class="v up">+15.7<small>bb/100</small></div><div class="s">$38.20 / hour</div></div>
+        <div class="rg-panel sk-kpi"><div class="rg-cap">Makeup</div><div class="v">$0.00</div><div class="s">Cleared Nov 16</div></div>
+        <div class="rg-panel sk-kpi"><div class="rg-cap">If settled now</div><div class="v up split" data-k="split">$620.25 / $620.25</div><div class="s">You / backer</div></div>
+      </div>
+      <div class="rg-panel sk-chart"><span class="rg-cap" style="color:var(--ink)">Running total</span><div class="rg-chart"></div></div>
+      <div class="rg-panel sk-set">
+        <div class="sk-row h"><span>Date</span><span>Type</span><span>Who paid</span><span>Amount</span><span>Effect</span></div>
+        <div class="sk-row"><span>Nov 16</span><span>Settlement</span><span>You → backer</span><b>$450.00</b><span class="mut">Profit split, makeup reset</span></div>
+      </div>`;
+    const draw = chart($('.rg-chart', sk), { unit: '$' });
+    const run = winningRun(90, 1900, 2500);
+    const net = run[run.length - 1], half = Math.max(0, net - 900) / 2;
+    sk.querySelector('[data-k="net"]').textContent = money(net);
+    sk.querySelector('[data-k="split"]').textContent = `${money(half, false)} / ${money(half, false)}`;
+    let shown = false;
+    new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && !shown) { shown = true; draw(run, null, !reduce); } }), { threshold: .35 }).observe(sk);
+    draw(run);
   }
   fitAll();
 })();
