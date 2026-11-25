@@ -98,14 +98,18 @@
   const kPl = el('k-pl'), kHands = el('k-hands'), kBb = el('k-bb'), kEv = el('k-ev');
   const line = el('line-path'), fill = el('fill-path'), ev = el('ev-path'), dot = el('line-dot'), handsBox = el('hands');
   if (line) {
-    const BB = 2; // $1/$2
+    const BB = 5; // $2/$5
     const MAXPTS = 60;
     let pl = 0, evv = 0, hands = 0;
     let series = [], evSeries = [];
     // a believable winning session: small pots, a few big ones, a cooler, a heater
     const seed = () => {
-      pl = 0; evv = 0; hands = 0; series = [0]; evSeries = [0];
-      for (let i = 0; i < 34; i++) step(true);
+      // replay until the opening stretch is a winner, so the window opens in the green
+      for (let tries = 0; tries < 200; tries++) {
+        pl = 0; evv = 0; hands = 380 + ((Math.random() * 120) | 0); series = [0]; evSeries = [0];
+        for (let i = 0; i < 34; i++) step(true);
+        if (pl > 120 && Math.min(...series.slice(-6)) > 40) break;
+      }
     };
     const swing = () => {
       const r = Math.random();
@@ -157,7 +161,7 @@
     seed();
     for (let i = 0; i < 4; i++) addHand(swing());
     draw();
-    if (!reduce) setInterval(() => { step(false); draw(); if (series.length >= MAXPTS && Math.random() < 0.01) seed(); }, 1400);
+    if (!reduce) setInterval(() => { step(false); if (pl < 0) seed(); draw(); }, 1400);
 
     /* mouse parallax on top of the sway */
     const stage = document.querySelector('.stage'), app = el('app3d');
