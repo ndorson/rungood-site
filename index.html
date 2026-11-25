@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RunGood — Live poker tracker for Windows</title>
-<meta name="description" content="RunGood tracks your online poker results live: session P&L, every hand, graphs, a HUD on your tables and a hand replayer. Download for Windows.">
+<title>RunGood — The tracker for club poker grinders</title>
+<meta name="description" content="RunGood tracks your club poker live: session P&L in real money, chip values per club, rake and rakeback, agent statements, a HUD on your tables and a replayer for every hand. For Windows.">
 <meta name="theme-color" content="#05070b">
-<meta property="og:title" content="RunGood — Know your real results. Live.">
-<meta property="og:description" content="Live session P&L, every hand, graphs, HUD and replayer. For Windows.">
+<meta property="og:title" content="RunGood — The tracker for club poker grinders">
+<meta property="og:description" content="Every club. Every hand. Live. Session P&L, rakeback, agent statements, HUD and replayer. For Windows.">
 <meta property="og:image" content="https://rungood.app/assets/hero-wide.jpg">
 <meta property="og:url" content="https://rungood.app/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="assets/hero-wide.webp">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="app.css">
 </head>
 <body>
 
@@ -32,11 +32,11 @@
   </a>
   <nav class="nav-links" aria-label="Main">
     <a href="#features">Features</a>
-    <a href="#how">How it works</a>
-    <a href="#privacy">Privacy</a>
+    <a href="#hud">HUD</a>
+    <a href="#clubs">Clubs</a>
     <a href="#faq">FAQ</a>
   </nav>
-  <a class="btn btn-small" href="download/" data-download><svg class="win" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4.3 10 3.2v7.7H2zM11 3.1 22 1.5v9.4H11zM2 12h8v7.8l-8-1.1zM11 12h11v9.5l-11-1.6z"/></svg>Download</a>
+  <a class="btn btn-small" href="download/"><svg class="win" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4.3 10 3.2v7.7H2zM11 3.1 22 1.5v9.4H11zM2 12h8v7.8l-8-1.1zM11 12h11v9.5l-11-1.6z"/></svg>Download</a>
 </header>
 
 <main id="top">
@@ -54,59 +54,26 @@
 
   <div class="hero-inner">
     <div class="hero-copy">
-      <p class="eyebrow reveal"><span class="pulse-dot"></span>Live poker tracker for Windows</p>
-      <h1 class="reveal">Know your <span class="grad">real results.</span><br>Live.</h1>
-      <p class="lede reveal">RunGood watches your tables while you play and books every hand on its own. Session P&amp;L, graphs, a HUD on your tables and a replayer for every hand. No imports, no spreadsheets.</p>
+      <p class="eyebrow reveal"><span class="pulse-dot"></span>For club poker grinders</p>
+      <h1 class="reveal">Every club.<br>Every hand.<br><span class="grad">Live.</span></h1>
+      <p class="lede reveal">The tracker built for club poker. RunGood follows your club tables while you play: session results in real money instead of chips, rake and rakeback per club, agent statements checked against your own hands, and a HUD on every table.</p>
       <div class="cta-row reveal">
-        <a class="btn btn-big" href="download/" data-download>
+        <a class="btn btn-big" href="download/">
           <svg class="win" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4.3 10 3.2v7.7H2zM11 3.1 22 1.5v9.4H11zM2 12h8v7.8l-8-1.1zM11 12h11v9.5l-11-1.6z"/></svg>
           <span><b>Download for Windows</b><small>Windows 10 &amp; 11 · 64-bit</small></span>
         </a>
         <a class="btn-ghost" href="#features">See what it does <span aria-hidden="true">→</span></a>
       </div>
-      <p class="fineprint reveal">Not on Mac yet: RunGood is Windows-only for now.</p>
+      <p class="fineprint reveal">Built for ClubGG clubs. Not on Mac yet: RunGood is Windows-only for now.</p>
     </div>
 
-    <!-- 3D app window -->
+    <!-- the real RunGood dashboard, rebuilt as a floating 3D window -->
     <div class="stage reveal" aria-hidden="true">
       <div class="app3d" id="app3d">
+        <div class="fit" data-w="1000" data-h="620"><div class="rg" id="rg-dash"></div></div>
         <div class="app-glare"></div>
-        <div class="app-top">
-          <div class="dots"><i></i><i></i><i></i></div>
-          <div class="app-title">RunGood</div>
-          <div class="live-pill"><span class="pulse-dot"></span>LIVE · 4 tables</div>
-        </div>
-        <div class="app-body">
-          <aside class="app-side">
-            <i class="on"></i><i></i><i></i><i></i><i></i>
-          </aside>
-          <div class="app-main">
-            <div class="kpis">
-              <div class="kpi"><span>Session</span><b id="k-pl" class="up">+$0.00</b></div>
-              <div class="kpi"><span>Hands</span><b id="k-hands">0</b></div>
-              <div class="kpi"><span>bb/100</span><b id="k-bb">0.0</b></div>
-              <div class="kpi"><span>All-in EV</span><b id="k-ev" class="teal">+$0</b></div>
-            </div>
-            <div class="chart">
-              <svg viewBox="0 0 400 150" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="fillg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3ddc84" stop-opacity=".35"/><stop offset="1" stop-color="#3ddc84" stop-opacity="0"/></linearGradient>
-                  <filter id="glow"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                </defs>
-                <g class="gridlines"><line x1="0" y1="37" x2="400" y2="37"/><line x1="0" y1="75" x2="400" y2="75"/><line x1="0" y1="112" x2="400" y2="112"/></g>
-                <path id="ev-path" class="ev-line" d=""/>
-                <path id="fill-path" fill="url(#fillg)" d=""/>
-                <path id="line-path" class="pl-line" filter="url(#glow)" d=""/>
-                <circle id="line-dot" r="4" class="pl-dot"/>
-              </svg>
-              <div class="legend"><span class="lg-pl">Won</span><span class="lg-ev">All-in EV</span></div>
-            </div>
-            <div class="hands" id="hands"></div>
-          </div>
-        </div>
       </div>
       <div class="app-shadow"></div>
-      <div class="float-chip c1"></div><div class="float-chip c2"></div><div class="float-card k1">A<span>♠</span></div><div class="float-card k2 red">K<span>♥</span></div>
     </div>
   </div>
 
@@ -116,16 +83,16 @@
 <!-- MARQUEE -->
 <section class="marquee" aria-label="Highlights">
   <div class="marquee-track">
-    <span>Live session P&amp;L</span><i>♠</i><span>HUD on your tables</span><i class="r">♥</i><span>Hand replayer</span><i>♣</i><span>Multi-table</span><i class="r">♦</i><span>All-in EV</span><i>♠</i><span>Rakeback &amp; statements</span><i class="r">♥</i><span>Staking deals</span><i>♣</i><span>Automatic backups</span><i class="r">♦</i>
-    <span>Live session P&amp;L</span><i>♠</i><span>HUD on your tables</span><i class="r">♥</i><span>Hand replayer</span><i>♣</i><span>Multi-table</span><i class="r">♦</i><span>All-in EV</span><i>♠</i><span>Rakeback &amp; statements</span><i class="r">♥</i><span>Staking deals</span><i>♣</i><span>Automatic backups</span><i class="r">♦</i>
+    <span>Built for club grinders</span><i>♠</i><span>Live session P&amp;L</span><i class="r">♥</i><span>Chip values per club</span><i>♣</i><span>Rake &amp; rakeback</span><i class="r">♦</i><span>Agent statements</span><i>♠</i><span>HUD on your tables</span><i class="r">♥</i><span>Hand replayer</span><i>♣</i><span>All-in EV</span><i class="r">♦</i>
+    <span>Built for club grinders</span><i>♠</i><span>Live session P&amp;L</span><i class="r">♥</i><span>Chip values per club</span><i>♣</i><span>Rake &amp; rakeback</span><i class="r">♦</i><span>Agent statements</span><i>♠</i><span>HUD on your tables</span><i class="r">♥</i><span>Hand replayer</span><i>♣</i><span>All-in EV</span><i class="r">♦</i>
   </div>
 </section>
 
 <!-- FEATURES -->
 <section class="section" id="features">
   <div class="section-head reveal">
-    <p class="eyebrow">Everything in one place</p>
-    <h2>Built for grinders who<br><span class="grad">want the truth.</span></h2>
+    <p class="eyebrow">Made for club poker</p>
+    <h2>Other trackers were built for poker sites.<br><span class="grad">This one is built for clubs.</span></h2>
   </div>
   <div class="features">
     <article class="feature reveal">
@@ -134,70 +101,74 @@
       <p>Your result updates hand by hand while you play. Win, loss, hands and bb/100 for every session.</p>
     </article>
     <article class="feature reveal">
+      <div class="ico ico-bank"><svg viewBox="0 0 48 48"><ellipse class="chip c1" cx="24" cy="36" rx="14" ry="5"/><ellipse class="chip c2" cx="24" cy="28" rx="14" ry="5"/><ellipse class="chip c3" cx="24" cy="20" rx="14" ry="5"/><ellipse class="chip c4" cx="24" cy="12" rx="14" ry="5"/></svg></div>
+      <h3>Chips to real money</h3>
+      <p>Set what a chip is worth in each club. Every result shows in real money, club by club.</p>
+    </article>
+    <article class="feature reveal">
+      <div class="ico ico-report"><svg viewBox="0 0 48 48"><rect class="bar b1" x="8" y="26" width="6" height="14" rx="2"/><rect class="bar b2" x="18" y="18" width="6" height="22" rx="2"/><rect class="bar b3" x="28" y="22" width="6" height="18" rx="2"/><rect class="bar b4" x="38" y="10" width="6" height="30" rx="2"/></svg></div>
+      <h3>Rake &amp; rakeback</h3>
+      <p>See the rake you paid and the rakeback you earned in every club, next to your results.</p>
+    </article>
+    <article class="feature reveal">
+      <div class="ico ico-backup"><svg viewBox="0 0 48 48"><path class="shield" d="M24 5 L40 11 V23 C40 33 33 40 24 43 C15 40 8 33 8 23 V11 Z"/><path class="check" d="M17 24 L22 29 L31 19"/></svg></div>
+      <h3>Agent statements</h3>
+      <p>Drop in your weekly statement. RunGood checks it against the hands you actually played.</p>
+    </article>
+    <article class="feature reveal">
       <div class="ico ico-hud"><svg viewBox="0 0 48 48"><rect class="frame" x="5" y="9" width="38" height="26" rx="5"/><rect class="tag t1" x="9" y="13" width="12" height="6" rx="2"/><rect class="tag t2" x="27" y="13" width="12" height="6" rx="2"/><rect class="tag t3" x="18" y="25" width="12" height="6" rx="2"/><path class="base" d="M16 41 H32"/></svg></div>
       <h3>HUD on your tables</h3>
-      <p>Opponent stats float right on the table, so you know who you are up against before you act.</p>
+      <p>Stats on every regular in your club, right next to their seat, before you act.</p>
     </article>
     <article class="feature reveal">
       <div class="ico ico-replay"><svg viewBox="0 0 48 48"><circle class="ring" cx="24" cy="24" r="17"/><path class="play" d="M20 16 L32 24 L20 32 Z"/></svg></div>
       <h3>Hand replayer</h3>
-      <p>Replay any hand street by street, share it with your study group, or export it as a hand history.</p>
+      <p>Replay any hand street by street, or share it with your study group.</p>
     </article>
     <article class="feature reveal">
       <div class="ico ico-multi"><svg viewBox="0 0 48 48"><rect class="tb a" x="5" y="7" width="17" height="14" rx="4"/><rect class="tb b" x="26" y="7" width="17" height="14" rx="4"/><rect class="tb c" x="5" y="27" width="17" height="14" rx="4"/><rect class="tb d" x="26" y="27" width="17" height="14" rx="4"/></svg></div>
-      <h3>Multi-table</h3>
-      <p>Four tables, eight tables. Every one is tracked on its own and summed up in one place.</p>
+      <h3>Multi-table, multi-club</h3>
+      <p>Several tables in several clubs at once. Each one tracked, all of it added up.</p>
     </article>
     <article class="feature reveal">
       <div class="ico ico-ev"><svg viewBox="0 0 48 48"><path class="ln" d="M6 32 C14 30 16 16 24 20 S36 10 42 14"/><path class="ln2" d="M6 34 C14 26 18 24 24 24 S34 18 42 18"/></svg></div>
       <h3>All-in EV</h3>
-      <p>See what you should have won against what you did win. Separate bad luck from bad play.</p>
-    </article>
-    <article class="feature reveal">
-      <div class="ico ico-bank"><svg viewBox="0 0 48 48"><ellipse class="chip c1" cx="24" cy="36" rx="14" ry="5"/><ellipse class="chip c2" cx="24" cy="28" rx="14" ry="5"/><ellipse class="chip c3" cx="24" cy="20" rx="14" ry="5"/><ellipse class="chip c4" cx="24" cy="12" rx="14" ry="5"/></svg></div>
-      <h3>Bankroll, rakeback &amp; staking</h3>
-      <p>Club statements, rakeback checks, staking deals and makeup, all next to your real results.</p>
-    </article>
-    <article class="feature reveal">
-      <div class="ico ico-report"><svg viewBox="0 0 48 48"><rect class="bar b1" x="8" y="26" width="6" height="14" rx="2"/><rect class="bar b2" x="18" y="18" width="6" height="22" rx="2"/><rect class="bar b3" x="28" y="22" width="6" height="18" rx="2"/><rect class="bar b4" x="38" y="10" width="6" height="30" rx="2"/></svg></div>
-      <h3>Reports</h3>
-      <p>Results by session, club, stake, position and date. Find your leaks and your best spots.</p>
-    </article>
-    <article class="feature reveal">
-      <div class="ico ico-backup"><svg viewBox="0 0 48 48"><path class="shield" d="M24 5 L40 11 V23 C40 33 33 40 24 43 C15 40 8 33 8 23 V11 Z"/><path class="check" d="M17 24 L22 29 L31 19"/></svg></div>
-      <h3>Automatic backups</h3>
-      <p>Daily backups to a folder you choose. Your hand history is safe, even on a new PC.</p>
+      <p>What you should have won against what you did win. Bad luck or bad play, you'll know.</p>
     </article>
   </div>
 </section>
 
-<!-- SHOWCASE -->
+<!-- SHOWCASE: the real app, rebuilt -->
 <section class="showcase">
-  <div class="show-row reveal">
-    <div class="show-art tilt"><img src="assets/art-hud.webp" alt="Poker table with glowing stat badges above every seat" loading="lazy"></div>
+  <div class="show-row wide reveal" id="hud">
     <div class="show-copy">
-      <p class="eyebrow">HUD</p>
-      <h2>Read the table <span class="grad">before you act.</span></h2>
-      <p>RunGood puts each opponent's numbers right next to their seat. Edit the layout with one shortcut, then forget about it.</p>
-      <ul class="ticks"><li>Stats per player, right on the table</li><li>Click-through, never in your way</li><li>Works on every table you open</li></ul>
+      <div>
+        <p class="eyebrow">HUD</p>
+        <h2>Know every regular <span class="grad">in your club.</span></h2>
+      </div>
+      <div>
+        <p>RunGood puts each opponent's numbers right next to their seat, in the same boxes you see in the app. Fish light up, regulars get a tag, and every number shows how many hands it's based on.</p>
+        <ul class="ticks"><li>Stats per player, right on the table</li><li>Click-through, never in your way</li><li>Build your own boxes in the HUD designer</li></ul>
+      </div>
     </div>
+    <div class="show-shot"><div class="fit" data-w="1000" data-h="660"><div class="rg rg-hudscene" id="rg-hud"></div></div></div>
   </div>
   <div class="show-row flip reveal">
-    <div class="show-art tilt"><img src="assets/art-graph.webp" alt="Glowing results graph rising through glass panels" loading="lazy"></div>
+    <div class="show-shot"><div class="fit" data-w="760" data-h="470"><div class="rg rg-graphcard" id="rg-graph"></div></div></div>
     <div class="show-copy">
       <p class="eyebrow">Graphs</p>
       <h2>Your graph, <span class="grad">drawn live.</span></h2>
-      <p>Your winnings and your all-in EV, side by side. Watch the line move while the session is still running.</p>
-      <ul class="ticks"><li>Every session drawn hand by hand</li><li>All-in EV next to real winnings</li><li>bb/100 for every session</li></ul>
+      <p>Every session drawn hand by hand, in big blinds or real money. Watch the line move while you're still sitting at the table.</p>
+      <ul class="ticks"><li>Last session, this week, this month or all time</li><li>Hands won, VPIP/PFR and rake under the graph</li><li>All-in EV next to what you really won</li></ul>
     </div>
   </div>
-  <div class="show-row reveal">
-    <div class="show-art tilt"><img src="assets/art-tables.webp" alt="Many poker tables connected to one glowing core" loading="lazy"></div>
+  <div class="show-row reveal" id="clubs">
+    <div class="show-shot"><div class="fit" data-w="760" data-h="452"><div class="rg rg-bank" id="rg-bank"></div></div></div>
     <div class="show-copy">
-      <p class="eyebrow">Every table</p>
-      <h2>All your tables. <span class="grad">One truth.</span></h2>
-      <p>Open as many tables as you like. RunGood follows each one and adds it all up: per table, per club, per stake.</p>
-      <ul class="ticks"><li>Automatic, no hand-history imports</li><li>Clubs, stakes and currencies kept apart</li><li>Re-buys and run-it-twice booked right</li></ul>
+      <p class="eyebrow">Clubs</p>
+      <h2>Every chip, <span class="grad">every club, accounted for.</span></h2>
+      <p>Know what each club should owe you before the agent tells you. RunGood adds up your results, rake and money moved per club, then checks the weekly statement against your own hands.</p>
+      <ul class="ticks"><li>Chip values and currencies per club</li><li>Club balance: what the club should show right now</li><li>Rakeback deals and agent statements in one place</li></ul>
     </div>
   </div>
 </section>
@@ -210,8 +181,8 @@
   </div>
   <ol class="steps">
     <li class="step reveal"><span class="num">01</span><div class="step-ico"><svg viewBox="0 0 48 48"><path class="arrow" d="M24 8 V30 M15 22 L24 31 L33 22"/><path class="tray" d="M8 32 V38 H40 V32"/></svg></div><h3>Download</h3><p>Install RunGood for Windows. It sets itself up in a minute.</p></li>
-    <li class="step reveal"><span class="num">02</span><div class="step-ico"><svg viewBox="0 0 48 48"><rect class="scr" x="6" y="9" width="36" height="24" rx="4"/><path class="tbl" d="M14 21 C14 16 34 16 34 21 C34 26 14 26 14 21 Z"/><path class="stand" d="M18 39 H30 M24 33 V39"/></svg></div><h3>Play as usual</h3><p>Open your poker client and sit down. Nothing to set up per table.</p></li>
-    <li class="step reveal"><span class="num">03</span><div class="step-ico"><svg viewBox="0 0 48 48"><path class="ln" d="M8 34 L18 24 L26 29 L40 13"/><circle class="pt" cx="40" cy="13" r="3"/></svg></div><h3>Watch it update</h3><p>Every hand lands in RunGood on its own. Your results, live.</p></li>
+    <li class="step reveal"><span class="num">02</span><div class="step-ico"><svg viewBox="0 0 48 48"><rect class="scr" x="6" y="9" width="36" height="24" rx="4"/><path class="tbl" d="M14 21 C14 16 34 16 34 21 C34 26 14 26 14 21 Z"/><path class="stand" d="M18 39 H30 M24 33 V39"/></svg></div><h3>Open your club tables</h3><p>Play your clubs as usual. Nothing to set up per table.</p></li>
+    <li class="step reveal"><span class="num">03</span><div class="step-ico"><svg viewBox="0 0 48 48"><path class="ln" d="M8 34 L18 24 L26 29 L40 13"/><circle class="pt" cx="40" cy="13" r="3"/></svg></div><h3>Watch it update</h3><p>Every hand lands in RunGood on its own. Your club results, live.</p></li>
   </ol>
 </section>
 
@@ -222,7 +193,7 @@
     <div>
       <p class="eyebrow">Fair play</p>
       <h2>Your cards. <span class="grad">Nobody else's.</span></h2>
-      <p>RunGood reads your own cards, the board, and opponents' cards only once they are shown at showdown. Never hidden cards. It never changes or controls your poker client, and your hands stay on your own PC.</p>
+      <p>RunGood reads your own cards, the board, and opponents' cards only once they are shown at showdown. Never hidden cards. It never changes or controls your poker app, and your hands stay on your own PC.</p>
     </div>
   </div>
 </section>
@@ -234,20 +205,20 @@
     <h2>Questions, <span class="grad">answered.</span></h2>
   </div>
   <div class="faq">
-    <details class="reveal"><summary>Which poker sites does RunGood work with?</summary><p>RunGood is built for ClubGG cash games today. More poker apps are planned.</p></details>
+    <details class="reveal"><summary>Which club apps does RunGood work with?</summary><p>RunGood is built for ClubGG cash games today. More club apps are planned.</p></details>
+    <details class="reveal"><summary>My club plays in chips. Does that work?</summary><p>Yes. Set what a chip is worth in each club, and RunGood shows your results in real money.</p></details>
     <details class="reveal"><summary>Is there a Mac version?</summary><p>Not yet. RunGood runs on Windows 10 and 11 (64-bit).</p></details>
     <details class="reveal"><summary>Do I have to import hand histories?</summary><p>No. RunGood picks up every hand on its own while you play.</p></details>
-    <details class="reveal"><summary>Where are my hands stored?</summary><p>On your own PC. You can add automatic backups to any folder you like.</p></details>
+    <details class="reveal"><summary>Where are my hands stored?</summary><p>On your own PC. Turn on automatic daily backups to any folder you like.</p></details>
     <details class="reveal"><summary>I used Club Tracker. What happens to my data?</summary><p>RunGood is the new name for Club Tracker. It updates itself and keeps all your hands, settings and nicknames.</p></details>
-    <details class="reveal"><summary>Does it update itself?</summary><p>Yes. New versions install on their own the next time you open RunGood.</p></details>
   </div>
 </section>
 
 <!-- FINAL CTA -->
 <section class="final">
   <div class="final-inner reveal">
-    <h2>Stop guessing.<br><span class="grad">Start running good.</span></h2>
-    <a class="btn btn-big" href="download/" data-download>
+    <h2>Stop guessing.<br><span class="grad">Run good in every club.</span></h2>
+    <a class="btn btn-big" href="download/">
       <svg class="win" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4.3 10 3.2v7.7H2zM11 3.1 22 1.5v9.4H11zM2 12h8v7.8l-8-1.1zM11 12h11v9.5l-11-1.6z"/></svg>
       <span><b>Download for Windows</b><small>Windows 10 &amp; 11 · 64-bit</small></span>
     </a>
@@ -262,5 +233,6 @@
 </footer>
 
 <script src="main.js" defer></script>
+<script src="app.js" defer></script>
 </body>
 </html>
