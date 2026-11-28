@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>You're invited to RunGood</title>
+<meta name="description" content="A friend invited you to RunGood: live results, hands and graphs for your ClubGG cash games. Free during the beta.">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<!-- Invite link from the app (Settings → My account → Invite friends): /invite/?code=XXXXXXXX.
+     The code is only shown here; the friend types it on RunGood's "Create account" screen. Server: cloud/account. -->
+<script>/* visit counter: no cookie, nothing stored on your device; the invite code is not sent */(function(){try{var u='https://br-ancient-king-bbmejkd9-support.compute.c-15.us-east-1.aws.neon.tech/api/support/v1/web',b=JSON.stringify({e:'pageview',p:location.pathname,r:''});if(navigator.sendBeacon)navigator.sendBeacon(u,b);else fetch(u,{method:'POST',body:b,keepalive:true});}catch(e){}})();</script>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px;
+    background: radial-gradient(80% 60% at 50% 0%, #10261c 0%, #05070b 60%); color: #eaf0f7;
+    font: 15px/1.55 "Segoe UI", system-ui, sans-serif; }
+  .card { width: 100%; max-width: 440px; padding: 28px 24px; border-radius: 16px; border: 1px solid rgba(160,190,230,.16);
+    background: linear-gradient(180deg, rgba(23,29,38,.94), rgba(14,18,25,.94)); box-shadow: 0 24px 70px rgba(0,0,0,.55); text-align: center; }
+  .brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; font: 700 22px "Segoe UI", system-ui, sans-serif; }
+  .brand b { color: #3ddc84; }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  p { margin: 0 0 14px; color: #9aa6b8; }
+  .code-box { margin: 18px 0 8px; padding: 14px; border-radius: 12px; border: 1px dashed rgba(61,220,132,.45); background: rgba(61,220,132,.06); }
+  .code-box small { display: block; font-size: 12px; color: #9aa6b8; margin-bottom: 4px; }
+  .code { font: 700 28px/1.2 ui-monospace, Consolas, monospace; letter-spacing: .14em; color: #3ddc84; user-select: all; }
+  .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+  .btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; border: 0; font: 700 15px "Segoe UI", system-ui, sans-serif;
+    text-decoration: none; cursor: pointer; }
+  .btn-main { background: #1aa864; color: #fff; }
+  .btn-ghost { background: rgba(160,190,230,.08); color: #eaf0f7; border: 1px solid rgba(160,190,230,.2); }
+  ol { text-align: left; margin: 18px 0 0; padding-left: 20px; color: #9aa6b8; font-size: 14px; }
+  ol li { margin: 4px 0; }
+  ol b { color: #eaf0f7; }
+  .foot { margin-top: 18px; font-size: 13px; }
+  .foot a { color: #3ddc84; }
+  [hidden] { display: none !important; }
+  @media (max-width: 380px) { .row { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand">
+    <svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true"><defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb079"/><stop offset="1" stop-color="#ff693a"/></linearGradient></defs><path d="M32 6C27 14 17 20 17 29a8 8 0 0 0 13 6.3V40l-4 5h12l-4-5v-4.7A8 8 0 0 0 47 29c0-9-10-15-15-23z" fill="url(#s)"/></svg>
+    <span>Run<b>Good</b></span>
+  </div>
+
+  <h1>A friend invited you to RunGood</h1>
+  <p>Live results, hands and graphs for your ClubGG cash games. Free during the beta. Windows 10 &amp; 11.</p>
+
+  <div class="code-box" id="box" hidden>
+    <small>Your invite code</small>
+    <div class="code" id="code"></div>
+  </div>
+
+  <div class="row">
+    <a class="btn btn-main" href="/download/">Download RunGood</a>
+    <button class="btn btn-ghost" type="button" id="copy" hidden>Copy code</button>
+    <a class="btn btn-ghost" href="/" id="more">What is RunGood?</a>
+  </div>
+
+  <ol id="steps" hidden>
+    <li>Download and install RunGood.</li>
+    <li>On the first screen choose <b>Create account</b>.</li>
+    <li>Click <b>Got an invite code from a friend?</b> and enter <b id="code2"></b>.</li>
+  </ol>
+
+  <div class="foot"><a href="/">rungood.app</a></div>
+</main>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+  var raw = '';
+  try { raw = new URLSearchParams(location.search).get('code') || ''; } catch (e) {}
+  var code = raw.toUpperCase().replace(/[\s-]/g, '');
+  var ok = code.length === 8 && code.split('').every(function (c) { return ALPHABET.indexOf(c) >= 0; });
+  if (!ok) return; // no code (or a broken link): the page still works as a plain download page
+  $('code').textContent = code;
+  $('code2').textContent = code;
+  $('box').hidden = false;
+  $('steps').hidden = false;
+  $('copy').hidden = false;
+  $('more').hidden = true;
+  $('copy').addEventListener('click', function () {
+    var done = function () { $('copy').textContent = 'Copied ✓'; setTimeout(function () { $('copy').textContent = 'Copy code'; }, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done, function () {});
+  });
+})();
+</script>
+</body>
+</html>
