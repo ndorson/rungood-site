@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RunGood account</title>
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<!-- Opened from the RunGood emails: #reset=<token> (set a new password) or #verify=<token> (confirm the email).
+     The token is in the # part, so it is never sent to this web host. Server: cloud/account (docs/ACCOUNT_API.md). -->
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px;
+    background: radial-gradient(80% 60% at 50% 0%, #10261c 0%, #05070b 60%); color: #eaf0f7;
+    font: 15px/1.55 "Segoe UI", system-ui, sans-serif; }
+  .card { width: 100%; max-width: 400px; padding: 28px 24px; border-radius: 16px; border: 1px solid rgba(160,190,230,.16);
+    background: linear-gradient(180deg, rgba(23,29,38,.94), rgba(14,18,25,.94)); box-shadow: 0 24px 70px rgba(0,0,0,.55); }
+  .brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; font: 700 22px "Segoe UI", system-ui, sans-serif; }
+  .brand b { color: #3ddc84; }
+  h1 { margin: 0 0 6px; font-size: 20px; text-align: center; }
+  p { margin: 0 0 14px; color: #9aa6b8; text-align: center; }
+  label { display: block; margin: 0 0 12px; font-size: 13px; color: #9aa6b8; }
+  input { display: block; width: 100%; margin-top: 5px; padding: 11px 12px; border-radius: 10px; border: 1px solid rgba(160,190,230,.22);
+    background: rgba(8,12,18,.8); color: #eaf0f7; font-size: 15px; }
+  input:focus { outline: 2px solid rgba(61,220,132,.5); outline-offset: 1px; }
+  button { width: 100%; padding: 12px; border: 0; border-radius: 10px; background: #1aa864; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; }
+  button:disabled { opacity: .6; cursor: default; }
+  .msg { margin: 14px 0 0; padding: 10px 12px; border-radius: 10px; font-size: 13.5px; text-align: center; }
+  .ok { background: rgba(61,220,132,.1); border: 1px solid rgba(61,220,132,.35); color: #bff3d6; }
+  .bad { background: rgba(255,91,91,.1); border: 1px solid rgba(255,91,91,.35); color: #ffc4bc; }
+  .foot { margin-top: 18px; text-align: center; font-size: 13px; }
+  .foot a { color: #3ddc84; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand">
+    <svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true"><defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb079"/><stop offset="1" stop-color="#ff693a"/></linearGradient></defs><path d="M32 6C27 14 17 20 17 29a8 8 0 0 0 13 6.3V40l-4 5h12l-4-5v-4.7A8 8 0 0 0 47 29c0-9-10-15-15-23z" fill="url(#s)"/></svg>
+    <span>Run<b>Good</b></span>
+  </div>
+
+  <section id="reset" hidden>
+    <h1>Set a new password</h1>
+    <p id="reset-for">Checking your link…</p>
+    <form id="reset-form" hidden>
+      <label>New password<input id="pw1" type="password" autocomplete="new-password" minlength="8" required></label>
+      <label>New password again<input id="pw2" type="password" autocomplete="new-password" minlength="8" required></label>
+      <button type="submit" id="reset-btn">Save new password</button>
+    </form>
+  </section>
+
+  <section id="verify" hidden>
+    <h1>Confirming your email…</h1>
+  </section>
+
+  <section id="none" hidden>
+    <h1>RunGood account</h1>
+    <p>This page opens from the links in RunGood's emails. Everything else about your account is in the app: click your name at the top right.</p>
+  </section>
+
+  <div id="msg" class="msg" hidden></div>
+  <div class="foot"><a href="/">rungood.app</a></div>
+</main>
+<script>
+(function () {
+  var API = 'https://br-ancient-king-bbmejkd9-account.compute.c-15.us-east-1.aws.neon.tech/api/auth';
+  var m = /^#(reset|verify)=([\w-]{20,100})$/.exec(location.hash);
+  // take the token out of the address bar (and the browser history) right away
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  var $ = function (id) { return document.getElementById(id); };
+  function say(text, ok) { var el = $('msg'); el.textContent = text; el.className = 'msg ' + (ok ? 'ok' : 'bad'); el.hidden = false; }
+  function post(path, body) {
+    // text/plain keeps it a simple request (no preflight); the server reads the JSON either way
+    return fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); });
+  }
+  var NET = "We couldn't reach RunGood. Check your connection and reload this page.";
+  if (!m) { $('none').hidden = false; return; }
+  var token = m[2];
+
+  if (m[1] === 'verify') {
+    $('verify').hidden = false;
+    post('/verify-email', { token: token }).then(function (r) {
+      $('verify').querySelector('h1').textContent = r.ok ? 'Email confirmed' : 'Link not valid';
+      say(r.ok ? 'Thanks! Your email is confirmed. You can close this page.' : (r.j.message || 'This link is not valid any more.'), r.ok);
+    }, function () { say(NET, false); });
+    return;
+  }
+
+  $('reset').hidden = false;
+  fetch(API + '/reset-info?token=' + encodeURIComponent(token)).then(function (r) {
+    return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+  }).then(function (r) {
+    if (!r.ok) { $('reset-for').textContent = ''; say(r.j.message || 'This link is not valid any more. Ask for a new one in RunGood.', false); return; }
+    $('reset-for').textContent = 'For the account ' + r.j.email + '. Use at least 8 characters.';
+    $('reset-form').hidden = false;
+    $('pw1').focus();
+  }, function () { say(NET, false); });
+
+  $('reset-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var a = $('pw1').value, b = $('pw2').value;
+    if (a.length < 8) { say('Use at least 8 characters.', false); return; }
+    if (a !== b) { say("The two passwords don't match.", false); return; }
+    $('reset-btn').disabled = true;
+    post('/reset-password', { token: token, password: a }).then(function (r) {
+      if (r.ok) {
+        $('reset-form').hidden = true;
+        $('reset-for').textContent = '';
+        say('Done! Your new password is set. Open RunGood and log in with it.', true);
+      } else { $('reset-btn').disabled = false; say(r.j.message || 'That did not work. Please try again.', false); }
+    }, function () { $('reset-btn').disabled = false; say(NET, false); });
+  });
+})();
+</script>
+</body>
+</html>
